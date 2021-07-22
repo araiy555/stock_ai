@@ -10,7 +10,7 @@ def get_stock_data(code):
 
 # 指定された株価データをcsvとして出力
 def save_csv(code, data):
-    filename = '/home/vagrant/work/csv/' + str(code) + '.csv'
+    filename = 'csv/' + str(code) + '.csv'
     data.to_csv(filename, sep=',')
 
 # main

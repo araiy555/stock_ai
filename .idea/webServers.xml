@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="7ab80e97-51c7-473b-bfd2-75173880b139" name="rolipop" url="http://ssh.lolipop.jp">
+        <fileTransfer host="ssh.lolipop.jp" port="2222" rootFolder="/home/users/2/versus.jp-stocktown" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="2222" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
