@@ -19,7 +19,7 @@ try {
 function getIpo($pdo)
 {
 
-    $sql = "SELECT * FROM ipo LIMIT 50";
+    $sql = "SELECT * FROM ipo ORDER BY date DESC LIMIT 50 ";
 
     $result = $pdo->query($sql);
 

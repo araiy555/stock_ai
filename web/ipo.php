@@ -19,14 +19,16 @@ try {
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json;charset=utf-8'));
     $response = curl_exec($curl);
 
-    $result2 = json_decode($response, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+    $result2 = json_decode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     foreach ($result2["data"] as $key => $val) {
         $result = getIpo($pdo, $val);
         if ($result[0] < 1) {
             setIpo($pdo, $val);
+        } else {
+            updateIpo($pdo, $val);
         }
     }
-curl_close($curl);
+    curl_close($curl);
 
 } catch (PDOException $e) {
     $isConnect = false;
@@ -44,13 +46,14 @@ function getIpo($pdo, $val)
     $aryItem = $result->fetch();
     return $aryItem;
 }
+
 function setIpo($pdo, $val)
 {
     $ipo_id = $val['_id'];
     $code = $val['code'];
     $date = $val['date'];
     $name = $val['name'];
-    $market_key= $val['market_key'];
+    $market_key = $val['market_key'];
     $market_name = $val['market_name'];
     $sector_key = $val['sector_key'];
     $sector_name = $val['sector_name'];
@@ -95,5 +98,43 @@ INSERT INTO ipo (
        '$unit',
        'JP'
     )";
+    return $pdo->query($sql);
+}
+
+function updateIpo($pdo, $val)
+{
+    $ipo_id = $val['_id'];
+    $code = $val['code'];
+    $date = $val['date'];
+    $name = $val['name'];
+    $market_key = $val['market_key'];
+    $market_name = $val['market_name'];
+    $sector_key = $val['sector_key'];
+    $sector_name = $val['sector_name'];
+    $url = $val['url'];
+    $p_kari = $val['p_kari'];
+    $v_kobo = $val['v_kobo'];
+    $p_uri = $val['p_uri'];
+    $v_uri = $val['v_uri'];
+    $unit = $val['unit'];
+
+    $sql = "
+UPDATE ipo SET 
+    code = '$code',
+      date = '$date',
+      name = '$name',
+      market_key = '$market_key',
+	  market_name = '$market_name',
+      sector_key = '$sector_key',
+      sector_name = '$sector_name',
+      url = '$url',
+      p_kari = '$p_kari',
+      v_kobo = '$v_kobo',
+      p_uri = '$p_uri',
+      v_uri = '$v_uri',
+      unit = '$unit',
+      update_at = current_timestamp
+WHERE ipo_id = '$ipo_id'
+";
     return $pdo->query($sql);
 }

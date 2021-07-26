@@ -1,14 +1,13 @@
+import pandas as pd
+import datetime as dt
+import numpy as np
 import pandas_datareader.data as web
-from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
-from tqdm import tqdm
 
-symbols = get_nasdaq_symbols()
 
-data = {}
-error_symbols = []
-for s in tqdm(symbols.index):
-    try:
-        data[s] = web.DataReader(s,"yahoo","2019/1/1")
-    except:
-        error_symbols.append(s)
+##df_ntt = web.DataReader('7203.T',"yahoo")
 
+df_ntt = web.DataReader('BHP.AX',"yahoo")
+
+print(df_ntt)
+
+df_ntt.to_csv('csv/AX/BHP.csv')

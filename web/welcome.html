@@ -6,6 +6,45 @@
 このファイル（welcome.html）は削除されてかまいません。
 
 *************************************************************************** -->
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+	<div id="tradingview_00bc2"></div>
+	<div class="tradingview-widget-copyright">TradingView提供の <a href="https://jp.tradingview.com/symbols/AAPL/" rel="noopener" target="_blank"><span class="blue-text">Apple</span></a></div>
+	<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+	<script type="text/javascript">
+		new TradingView.MediumWidget(
+				{
+					"symbols": [
+						[
+							"Apple",
+							"AAPL"
+						],
+						[
+							"Google",
+							"GOOGL"
+						],
+						[
+							"Microsoft",
+							"MSFT"
+						]
+					],
+					"chartOnly": false,
+					"width": 1000,
+					"height": 400,
+					"locale": "ja",
+					"colorTheme": "light",
+					"gridLineColor": "rgba(240, 243, 250, 0)",
+					"trendLineColor": "#2962FF",
+					"fontColor": "#787B86",
+					"underLineColor": "rgba(41, 98, 255, 0.3)",
+					"underLineBottomColor": "rgba(41, 98, 255, 0)",
+					"isTransparent": false,
+					"autosize": false,
+					"container_id": "tradingview_00bc2"
+				}
+		);
+	</script>
+
 
 <html>
 <head>
