@@ -19,7 +19,7 @@ try {
 function getNews($pdo)
 {
 
-    $sql = "SELECT * FROM news LIMIT 50";
+    $sql = "SELECT * FROM news ORDER BY id DESC LIMIT 50";
 
     $result = $pdo->query($sql);
 
