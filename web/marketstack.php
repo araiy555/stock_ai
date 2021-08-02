@@ -14,8 +14,8 @@ try {
 
         $queryString = http_build_query([
             'access_key' => 'a54e1687262eda9a5362a63844d0e752',
-            'limit' => '1000',
-            'offset' => '1000' * $i,
+            'limit' => '2000',
+            'offset' => '2000' * $i,
         ]);
         $ch = curl_init(sprintf('%s?%s', 'http://api.marketstack.com/v1/tickers', $queryString));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -26,7 +26,10 @@ try {
         $apiResult = json_decode($json, true);
 
         foreach ($apiResult['data'] as $stocksData) {
-            var_dump(setStock($pdo, $stocksData));
+            $result = getStock($pdo, $stocksData);
+            if ($result[0] < 1) {
+                var_dump(setStock($pdo, $stocksData));
+            }
         }
 
     }
@@ -36,7 +39,16 @@ try {
     $isConnect = false;
     echo "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
 }
+function getStock($dbh, $apiResult)
+{
+    $symbol = $apiResult['symbol'];
+    $sql = "SELECT count(1) FROM marketstock WHERE symbol = '$symbol'";
 
+    $result = $dbh->query($sql);
+
+    $aryItem = $result->fetch();
+    return $aryItem;
+}
 function setStock($dbh, $apiResult)
 {
     $stock_name = $apiResult['name'];
