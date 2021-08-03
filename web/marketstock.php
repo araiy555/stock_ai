@@ -10,7 +10,7 @@ try {
     $pdo = new PDO("mysql:host=" . $server . "; dbname=" . $database, $user, $pass);
 
 
-    for ($i = 0; $i <= 200; $i++) {
+    for ($i = 0; $i <= 300; $i++) {
 
         $queryString = http_build_query([
             'access_key' => 'a54e1687262eda9a5362a63844d0e752',

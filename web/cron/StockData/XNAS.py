@@ -8,10 +8,11 @@ import time
 def setCsv(row):
     try:
      df_ntt = web.DataReader(row[2],"yahoo")
-     df_ntt.to_csv('../../csv/XNAS/' + row[2] + '.csv')
+     df_ntt.to_csv('../csv/XNAS/' + row[2] + '.csv')
      print('ok' + row[2])
     except:
-        print('error' + row[2])
+      open('../csv/XNAS/' + row[2] + '.csv', 'w')
+      print('error' + row[2])
     return 0
 
 # コネクション作成

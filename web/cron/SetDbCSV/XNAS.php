@@ -13,7 +13,9 @@ try {
     $getStock = getChart($pdo);
 
     foreach ($getStock as $key => $val) {
-        if (($handle = fopen("../../csv/XNAS/" . $val['symbol'] . ".csv")) == true) {
+        echo $val['symbol'];
+        if (($handle = fopen("../csv/XNAS/" . $val['symbol'] . ".csv",'r')) == true) {
+
             // 1行ずつfgetcsv()関数を使って読み込む
             while (($data = fgetcsv($handle))) {
                 foreach ($data as $value) {
@@ -24,7 +26,6 @@ try {
 
             $data = json_encode($test);
             $getChart = getStock($pdo, $val['id']);
-
             if ($getChart[0] < 1) {
                 setChart($pdo, $val['id'], $data);
             } else {
@@ -43,7 +44,7 @@ function setChartUpdate($pdo, $id, $data)
     $sql = "
 UPDATE marketstockchart SET 
       data = '$data',
-      update_at = current_timestamp
+      update_at = current_timestamp  
 WHERE marketstock_id = '$id'
 ";
     return $pdo->query($sql);
