@@ -7,14 +7,17 @@ $database = "LAA1326943-stocktown";                      // 実際の接続値�
 
 $row = 1;
 $test = [];
+
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+
 try {
     /// DB接続を試みる
     $pdo = new PDO("mysql:host=" . $server . "; dbname=" . $database, $user, $pass);
     $getStock = getChart($pdo);
 
     foreach ($getStock as $key => $val) {
-        echo $val['symbol'];
-        if (($handle = fopen("../csv/XNAS/" . $val['symbol'] . ".csv",'r')) == true) {
+        if (($handle = fopen("../../csv/XNAS/" . $val['symbol'] . ".csv",'r')) == true) {
 
             // 1行ずつfgetcsv()関数を使って読み込む
             while (($data = fgetcsv($handle))) {
