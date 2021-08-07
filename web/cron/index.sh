@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 StockData/XNAS.py
+/usr/local/bin/python3 StockData/XNAS.py
