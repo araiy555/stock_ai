@@ -1,5 +1,7 @@
 import pandas as pd
 import datetime as dt
+from dateutil.relativedelta import relativedelta
+
 import numpy as np
 import pandas_datareader.data as web
 import mysql.connector
@@ -7,7 +9,9 @@ import time
 
 def setCsv(row):
     try:
-     df_ntt = web.DataReader(row[2],"yahoo")
+     end = dt.date.today()
+     start = end - relativedelta(months=1) # 1ヶ月前
+     df_ntt = web.DataReader(row[2],"yahoo" , start, end)
      df_ntt.to_csv('../csv/XNAS/' + row[2] + '.csv')
      print('ok' + row[2])
     except:

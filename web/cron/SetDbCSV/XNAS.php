@@ -9,7 +9,7 @@ $row = 1;
 $test = [];
 
 error_reporting(E_ALL);
-ini_set('display_errors', TRUE);
+ini_set('display_errors', true);
 
 try {
     /// DB接続を試みる
@@ -17,16 +17,20 @@ try {
     $getStock = getChart($pdo);
 
     foreach ($getStock as $key => $val) {
-        if (($handle = fopen("../../csv/XNAS/" . $val['symbol'] . ".csv",'r')) == true) {
+        $test = array();
+        if (($handle = fopen("../../csv/XNAS/" . $val['symbol'] . ".csv", 'r')) == true) {
 
             // 1行ずつfgetcsv()関数を使って読み込む
             while (($data = fgetcsv($handle))) {
+
                 foreach ($data as $value) {
-                    $test[$row][] = $value;
+                    if (!preg_match('/Date|High|Low|Open|Close|Volum|Adj Close/', $value)) {
+                        $test[$row][] = $value;
+                    }
                 }
+
                 $row++;
             }
-
             $data = json_encode($test);
             $getChart = getStock($pdo, $val['id']);
             if ($getChart[0] < 1) {
