@@ -15,7 +15,9 @@ def setCsv(row):
      df_ntt.to_csv('../csv/XNAS/' + row[2] + '.csv')
      print('ok' + row[2])
     except:
-      open('../csv/XNAS/' + row[2] + '.csv', 'w')
+      f = open('../csv/XNAS/' + row[2] + '.csv', 'w')
+      f.write('')  # 何も書き込まなくてファイルは作成されました
+      f.close()
       print('error' + row[2])
     return 0
 
