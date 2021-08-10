@@ -1,2 +1,5 @@
 #!/bin/bash
-/usr/local/bin/python3 /home/users/2/versus.jp-stocktown/web/cron/StockData/XNAS.py
+
+cd
+cd ./web/cron/StockData
+/usr/local/bin/python3 XNAS.py

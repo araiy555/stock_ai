@@ -13,10 +13,10 @@ def setCsv(row):
     ## start = end - relativedelta(months=1) # 1ヶ月前
      ##df_ntt = web.DataReader(row[2],"yahoo" , start, end)
      df_ntt = web.DataReader(row[2],"yahoo")
-     df_ntt.to_csv('../csv/XNAS/' + row[2] + '.csv')
+     df_ntt.to_csv('../../csv/XNAS/' + row[2] + '.csv')
      print('ok' + row[2])
     except:
-      f = open('../csv/XNAS/' + row[2] + '.csv', 'w')
+      f = open('../../csv/XNAS/' + row[2] + '.csv', 'w')
       f.write('')  # 何も書き込まなくてファイルは作成されました
       f.close()
       print('error' + row[2])
