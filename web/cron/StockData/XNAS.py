@@ -10,9 +10,9 @@ import time
 def setCsv(row):
     try:
      ##end = dt.date.today()
-    ## start = end - relativedelta(months=1) # 1ヶ月前
+     ##start = datetime.date.today()
      ##df_ntt = web.DataReader(row[2],"yahoo" , start, end)
-     df_ntt = web.DataReader(row[2],"yahoo")
+     df_ntt = web.DataReader(row[2],"yahoo","1980/1/1")
      df_ntt.to_csv('../../csv/XNAS/' + row[2] + '.csv')
      print('ok' + row[2])
     except:
