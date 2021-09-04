@@ -12,6 +12,7 @@ from pandas import Series,DataFrame
 import pandas_datareader.data as web
 import pymysql as pm
 import json
+import time
 
 def setCsv(row):
     try:
@@ -23,6 +24,12 @@ def setCsv(row):
         Volume = df.tail(1)['Volume'].values
         tp =  Volume * Close
         data = yf.Ticker(row['symbol'])
+
+        #print(data.balance_sheet)
+
+        #print(data.quarterly_cashflow)
+        #print(data.financials)
+
         with conn.cursor() as cursor:
             sql = ("SELECT count(1) as count FROM marketstockinfo WHERE marketstock_id=%s")
             cursor.execute(sql, (row['id']))
@@ -30,15 +37,15 @@ def setCsv(row):
             print(result)
         if result['count'] == 0:
             with conn.cursor() as cursor:
-                    sql = ('INSERT INTO marketstockinfo (marketstock_id, closing_price, open_price, high_price, low_price, volume, trading_price, data) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)')
-                    cursor.execute(sql, (row['id'], str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info)))
+                    sql = ('INSERT INTO marketstockinfo (marketstock_id, closing_price, open_price, high_price, low_price, volume, trading_price, data, balance_sheet) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)')
+                    cursor.execute(sql, (row['id'], str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet)))
 
                     conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
                     print('insert ok' + row['symbol'])
         else:
             with conn.cursor() as cursor:
-                        sql = ('UPDATE marketstockinfo SET closing_price = %s, open_price = %s, high_price = %s, low_price = %s, volume = %s, trading_price = %s, data = %s WHERE marketstock_id = %s')
-                        cursor.execute(sql, (str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info),row['id']))
+                        sql = ('UPDATE marketstockinfo SET closing_price = %s, open_price = %s, high_price = %s, low_price = %s, volume = %s, trading_price = %s, data = %s, balance_sheet = %s, update_at = %s WHERE marketstock_id = %s')
+                        cursor.execute(sql, (str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet), time.strftime('%Y-%m-%d %H:%M:%S'), row['id']))
 
                         conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
                         print('update ok' + row['symbol'])
