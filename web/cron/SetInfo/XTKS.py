@@ -16,14 +16,15 @@ import time
 
 def setCsv(row):
     try:
-        df = web.DataReader(row['symbol'], "yahoo")
+        xtks = row['symbol'].replace('XTKS', 'T')
+        df = web.DataReader(xtks, "yahoo")
         Open = df.tail(1)['Open'].values
         High = df.tail(1)['High'].values
         Low = df.tail(1)['Low'].values
         Close = df.tail(1)['Close'].values
         Volume = df.tail(1)['Volume'].values
         tp =  Volume * Close
-        data = yf.Ticker(row['symbol'])
+        data = yf.Ticker(xtks)
 
         #print(data.balance_sheet)
 
@@ -41,16 +42,16 @@ def setCsv(row):
                     cursor.execute(sql, (row['id'], str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet)))
 
                     conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
-                    print('insert ok' + row['symbol'])
+                    print('insert ok' + xtks)
         else:
             with conn.cursor() as cursor:
                         sql = ('UPDATE marketstockinfo SET closing_price = %s, open_price = %s, high_price = %s, low_price = %s, volume = %s, trading_price = %s, data = %s, balance_sheet = %s, update_at = %s WHERE marketstock_id = %s')
                         cursor.execute(sql, (str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet), time.strftime('%Y-%m-%d %H:%M:%S'), row['id']))
 
                         conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
-                        print('update ok' + row['symbol'])
+                        print('update ok' + xtks)
     except:
-        print('error' + row['symbol'])
+        print('error' + xtks)
     return 0
 
 DATABASE = {
@@ -65,7 +66,7 @@ DATABASE = {
 conn = pm.connect(**DATABASE)
 
 with conn.cursor() as cursor:
-    sql = "SELECT * FROM marketstock"
+    sql = "SELECT * FROM marketstock WHERE mic = 'XTKS'"
     cursor.execute(sql)
 
 ret = cursor.fetchall()
