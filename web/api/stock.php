@@ -24,7 +24,7 @@ FROM marketstock AS ms
 INNER JOIN marketstockchart as msc ON msc.marketstock_id = ms.id
 INNER JOIN marketstockinfo as msi ON msi.marketstock_id = ms.id
 LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
-WHERE ms.stock_name LIKE '$val' OR ms.symbol LIKE '$val'";
+WHERE ms.stock_name LIKE '$val' OR ms.symbol LIKE '$val' OR mt.overview LIKE '%$val%'";
 
     $result = $pdo->query($sql);
 
