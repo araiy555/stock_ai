@@ -19,9 +19,10 @@ try {
 function get($pdo, $market)
 {
 
-    $sql = "SELECT ms.*, msi.*
+    $sql = "SELECT ms.*, msi.*,mt.*
 FROM marketstock AS ms
 INNER JOIN marketstockindex as msi ON msi.marketstock_id = ms.id
+LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
 WHERE ms.mic = '$market'";
 
     $result = $pdo->query($sql);

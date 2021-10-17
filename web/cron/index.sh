@@ -48,6 +48,9 @@ log "XNAS.php 処理終了"
 /usr/local/php/7.3/bin/php XTKS.php
 log "XTKS.php 処理終了"
 
+cd ../../
+/usr/local/php/7.3/bin/php markettranslation.php
+
 log "処理終了"
 
 done
