@@ -31,7 +31,7 @@ function setindexUpdate($dbh, $id, $per, $roe, $trailingEps)
 UPDATE marketstockindex SET 
       per = '$per',
       eps = '$trailingEps',
-      roe = '$roe'
+      roe = '$roe',
       update_at = current_timestamp  
 WHERE marketstock_id = '$id'
 ";
@@ -86,19 +86,15 @@ try {
         $info = json_decode($val['info']);
 
         $per = (int)$closing_price / $info->trailingEps;
-        $roe = (int)$info->returnOnEquity * 100;
+        $roe = $info->returnOnEquity * 100;
         $per = floor($per) . PHP_EOL;
 
-
-        //        var_dump($info->sharesOutstanding);
-//        var_dump($info->dividendYield);
-//        var_dump($info->shortRatio);
-//
+        $roe = (int)$roe . '%';
         $rel = check($pdo, $val['id']);
         if ($rel[0] < 1) {
-            $result = setindex($pdo, $val['id'], (string)$per, (string)$roe, (string)$info->trailingEps);
+            $result = setindex($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps);
         } else {
-            $result = setindexUpdate($pdo, $val['id'], (string)$per, (string)$roe, (string)$info->trailingEps);
+            $result = setindexUpdate($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps);
         }
 
     }
