@@ -21,6 +21,9 @@ function log () {
 while :
 do
 # 処理開始logを出力
+# 手順　marketstockテーブルからCSVを作成する。
+# CSVからmarketstockindexに格納する
+
 log "処理開始"
 
 cd

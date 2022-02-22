@@ -24,7 +24,7 @@ INNER JOIN marketstockinfo as msi ON msi.marketstock_id = ms.id";
 }
 
 
-function setindexUpdate($dbh, $id, $per, $roe, $trailingEps)
+function setindexUpdate($dbh, $id, $per, $roe, $trailingEps, $pbr)
 {
 
     $sql = "
@@ -32,6 +32,7 @@ UPDATE marketstockindex SET
       per = '$per',
       eps = '$trailingEps',
       roe = '$roe',
+      pbr = '$pbr',
       update_at = current_timestamp  
 WHERE marketstock_id = '$id'
 ";
@@ -49,7 +50,7 @@ function check($pdh, $id)
     return $aryItem;
 }
 
-function setindex($dbh, $id, $rer, $roe, $trailingEps)
+function setindex($dbh, $id, $rer, $roe, $trailingEps, $pbr)
 {
     $sql = "
 INSERT INTO marketstockindex (
@@ -57,11 +58,14 @@ INSERT INTO marketstockindex (
       per,
       eps,
       roe,
+      pbr,
       update_at
     ) values (
        '$id',
-       '$rer',
+       '$rer',    
+       '$trailingEps',
        '$roe',
+       '$pbr',
        '$trailingEps',
        current_timestamp
     )";
@@ -84,17 +88,28 @@ try {
         $closing_price = preg_replace('/\[|\]/', '', $val['closing_price']);
         $closing_price = floor($closing_price);
         $info = json_decode($val['info']);
-
+        ## PER(株価収益率) = 株価/EPS
         $per = (int)$closing_price / $info->trailingEps;
         $roe = $info->returnOnEquity * 100;
+
+        // BPS = 純資産÷発行済み株式数
+        preg_match("/Total Assets (.*) /", $val['balance_sheet'],$matches);
+        $balance_sheet =  trim($matches[1]);
+        $balance_sheets = explode("  ", $balance_sheet);
+        $bps = $balance_sheets[0] / $info->sharesOutstanding;
+
+        // PBR = 株価 / BPS
+        $pbr = (int)$closing_price / (int)$bps;
+        var_dump(floor($pbr));
+
         $per = floor($per) . PHP_EOL;
 
         $roe = (int)$roe . '%';
         $rel = check($pdo, $val['id']);
         if ($rel[0] < 1) {
-            $result = setindex($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps);
+            $result = setindex($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps,(string)floor($pbr));
         } else {
-            $result = setindexUpdate($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps);
+            $result = setindexUpdate($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps,(string)floor($pbr));
         }
 
     }

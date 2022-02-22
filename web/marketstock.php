@@ -29,11 +29,11 @@ try {
             $result = getStock($pdo, $stocksData);
             if ($result[0] < 1) {
                 var_dump(setStock($pdo, $stocksData));
+            } else {
+                var_dump(setUpdateStock($pdo, $stocksData));
             }
         }
-
     }
-
 
 } catch (PDOException $e) {
     $isConnect = false;
@@ -51,6 +51,7 @@ function getStock($dbh, $apiResult)
 }
 function setStock($dbh, $apiResult)
 {
+
     $stock_name = $apiResult['name'];
     $symbol = $apiResult['symbol'];
     $has_intraday = $apiResult['has_intraday'];
@@ -94,3 +95,43 @@ INSERT INTO marketstock (
     )";
     return $dbh->query($sql);
 }
+
+
+function setUpdateStock($dbh, $apiResult)
+{
+
+    $id = $apiResult['id'];
+    $stock_name = $apiResult['name'];
+    $symbol = $apiResult['symbol'];
+    $has_intraday = $apiResult['has_intraday'];
+    $has_eod = $apiResult['has_eod'];
+    $country = $apiResult['country'];
+    $name = $apiResult['stock_exchange']['name'];
+    $acronym = $apiResult['stock_exchange']['acronym'];
+    $mic = $apiResult['stock_exchange']['mic'];
+    $stock_exchange_country = $apiResult['stock_exchange']['country'];
+    $stock_exchange_country_code = $apiResult['stock_exchange']['country_code'];
+    $city = $apiResult['stock_exchange']['city'];
+    $website = $apiResult['stock_exchange']['website'];
+
+
+    $sql = "
+UPDATE marketstock SET 
+      stock_name = '$stock_name',
+      symbol = '$symbol',
+      has_intraday = '$has_intraday',
+      has_eod = '$has_eod',
+      country = '$country',
+	  stock_exchange_name =  '$name',
+      acronym  =  '$acronym',
+      mic =  '$mic',
+      stock_exchange_country =  '$stock_exchange_country',
+      stock_exchange_country_code =  '$stock_exchange_country_code',
+      city = '$city',
+      website = '$website'
+WHERE id = '$id'
+";
+    return $dbh->query($sql);
+
+}
+
