@@ -100,16 +100,14 @@ try {
 
         // PBR = 株価 / BPS
         $pbr = (int)$closing_price / (int)$bps;
-        var_dump(floor($pbr));
 
         $per = floor($per) . PHP_EOL;
 
-        $roe = (int)$roe . '%';
         $rel = check($pdo, $val['id']);
         if ($rel[0] < 1) {
-            $result = setindex($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps,(string)floor($pbr));
+            $result = setindex($pdo, $val['id'], (int)$per, (int)$roe, (int)$info->trailingEps,floor($pbr));
         } else {
-            $result = setindexUpdate($pdo, $val['id'], (string)$per.'倍', (string)$roe, (string)$info->trailingEps,(string)floor($pbr));
+            $result = setindexUpdate($pdo, $val['id'], (int)$per, (int)$roe, (int)$info->trailingEps,floor($pbr));
         }
 
     }
