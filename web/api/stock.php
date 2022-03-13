@@ -19,12 +19,14 @@ try {
 function getNews($pdo, $val)
 {
 
-    $sql = "SELECT ms.*, msc.*, msi.closing_price, msi.open_price, msi.high_price, msi.low_price, msi.volume, msi.trading_price, msi.data as info, msi.balance_sheet ,mt.*
+    $sql = "SELECT ms.*, msc.*, msid.*, msi.closing_price, msi.open_price, msi.high_price, msi.low_price, msi.volume, msi.trading_price, msi.data as info, msi.balance_sheet ,mt.*
 FROM marketstock AS ms
 INNER JOIN marketstockchart as msc ON msc.marketstock_id = ms.id
 INNER JOIN marketstockinfo as msi ON msi.marketstock_id = ms.id
+INNER JOIN marketstockindex as msid ON msid.marketstock_id = ms.id
 LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
 WHERE ms.stock_name LIKE '$val' OR ms.symbol LIKE '$val' OR mt.overview LIKE '$val'";
+
 
     $result = $pdo->query($sql);
 
