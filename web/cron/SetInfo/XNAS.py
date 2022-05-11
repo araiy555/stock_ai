@@ -24,11 +24,55 @@ def setCsv(row):
         Volume = df.tail(1)['Volume'].values
         tp =  Volume * Close
         data = yf.Ticker(row['symbol'])
+        print(data.info['marketCap'])
+        print(data.info['industry'])
+        print(data.info['sector'])
 
-        #print(data.balance_sheet)
+       #https://note.com/misamisa333/n/n0d574c96b8d6
 
-        #print(data.quarterly_cashflow)
-        #print(data.financials)
+#配当を表示
+#msft.dividends
+
+#分割を表示
+#msft.splits
+
+#財務情報を表示
+#msft.financials
+#msft.quarterly_financials
+
+#主要な所有者を表
+ #print(data.major_holders)
+
+#機関保有者を表示
+#msft.institutional_holders
+
+#バランスシートを表示
+#msft.balance_sheet
+#msft.quarterly_balanijce_sheet
+
+#キャッシュフローを表示
+ #print(data.cashflow)
+#msft.quarterly_cashflow
+
+#収益を表示
+#msft.earnings
+#msft.quarterly_earnings
+
+#持続可能性を示す
+#msft.sustainability
+
+#アナリストの推奨事項を表示
+#msft.recommendations
+
+#次のイベント（収益など）を表示
+#print(data.calendar)
+
+#ISINコードを表示-*実験的*
+#ISIN =国際証券識別番号
+#msft.isin
+
+#オプションの有効期限を表示
+#msft.options
 
         with conn.cursor() as cursor:
             sql = ("SELECT count(1) as count FROM marketstockinfo WHERE marketstock_id=%s")
@@ -37,15 +81,14 @@ def setCsv(row):
             print(result)
         if result['count'] == 0:
             with conn.cursor() as cursor:
-                    sql = ('INSERT INTO marketstockinfo (marketstock_id, closing_price, open_price, high_price, low_price, volume, trading_price, data, balance_sheet) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)')
-                    cursor.execute(sql, (row['id'], str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet)))
-
+                    sql = ('INSERT INTO marketstockinfo (marketstock_id, closing_price, open_price, high_price, low_price, volume, trading_price, data, balance_sheet, dividends, splits, financials, major_holders, institutional_holders, cashflow, earnings, sustainability, recommendations, calendar, isin, options, news, sector, industry) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)')
+                    cursor.execute(sql, (row['id'], str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet), str(data.dividends), str(data.splits), str(data.financials), str(data.major_holders), str(data.institutional_holders), str(data.cashflow), str(data.earnings), str(data.sustainability), str(data.recommendations), str(data.calendar), str(data.isin), str(data.options), str(data.info['sector']), str(data.info['industry'])))
                     conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
                     print('insert ok' + row['symbol'])
         else:
             with conn.cursor() as cursor:
-                        sql = ('UPDATE marketstockinfo SET closing_price = %s, open_price = %s, high_price = %s, low_price = %s, volume = %s, trading_price = %s, data = %s, balance_sheet = %s, update_at = %s WHERE marketstock_id = %s')
-                        cursor.execute(sql, (str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet), time.strftime('%Y-%m-%d %H:%M:%S'), row['id']))
+                        sql = ('UPDATE marketstockinfo SET closing_price = %s, open_price = %s, high_price = %s, low_price = %s, volume = %s, trading_price = %s, data = %s, balance_sheet = %s, dividends = %s, splits = %s, financials = %s, major_holders = %s, institutional_holders = %s, cashflow = %s, earnings = %s, sustainability = %s, recommendations = %s, calendar = %s, isin = %s, options = %s , sector = %s, industry = %s, update_at = %s WHERE marketstock_id = %s')
+                        cursor.execute(sql, (str(Close), str(Open), str(High), str(Low), str(Volume), str(tp), json.dumps(data.info), str(data.balance_sheet), str(data.dividends), str(data.splits), str(data.financials), str(data.major_holders), str(data.institutional_holders), str(data.cashflow), str(data.earnings), str(data.sustainability), str(data.recommendations), str(data.calendar), str(data.isin), str(data.options), str(data.info['sector']), str(data.info['industry']), time.strftime('%Y-%m-%d %H:%M:%S'), row['id']))
 
                         conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
                         print('update ok' + row['symbol'])
