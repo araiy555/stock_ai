@@ -73,6 +73,33 @@ INSERT INTO marketstockindex (
     return $dbh->query($sql);
 }
 
+function getCalendar($pdo, $id)
+{
+
+    $sql = "SELECT info.calendar
+FROM marketstock AS ms
+INNER JOIN marketstockinfo AS info ON info.marketstock_id = ms.id
+LEFT JOIN market_translation AS mt ON mt.marketstock_id = ms.id
+WHERE `calendar` LIKE '%Earnings Date%' AND ms.id = '$id'";
+
+    $result = $pdo->query($sql);
+
+    $aryItem = $result->fetchAll();
+    return $aryItem;
+}
+
+function getCalendarUpdate($dbh, $id, $calendar_start, $calendar_end)
+{
+
+    $sql = "
+UPDATE marketstockindex SET 
+      calendar_start = '$calendar_start',
+      calendar_end = '$calendar_end',
+      update_at = current_timestamp  
+WHERE marketstock_id = '$id'
+";
+    return $dbh->query($sql);
+}
 
 
 
@@ -110,7 +137,19 @@ try {
             $result = setindexUpdate($pdo, $val['id'], (int)$per, (int)$roe, (int)$info->trailingEps,floor($pbr));
         }
 
+        $getCalendar = getCalendar($pdo, $val['id']);
+
+        foreach ($getCalendar as $key => $value) {
+            preg_match('/Earnings Date (.*)-(.*)-(.*) (.*):(.*):(.*)/',$value['calendar'], $match);
+            $str = str_replace("Earnings Date     ", "", $match[0]);
+
+            $pieces = explode(" ", $str);
+
+            getCalendarUpdate($pdo, $val['id'], (string)($pieces[0]), (string)($pieces[3]));
+
+        }
     }
+
 
 //時価総額 	1756919758848
 //発行済株式数 	506440992
