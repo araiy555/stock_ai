@@ -24,9 +24,6 @@ def setCsv(row):
         Volume = df.tail(1)['Volume'].values
         tp =  Volume * Close
         data = yf.Ticker(row['symbol'])
-        print(data.info['marketCap'])
-        print(data.info['industry'])
-        print(data.info['sector'])
 
        #https://note.com/misamisa333/n/n0d574c96b8d6
 

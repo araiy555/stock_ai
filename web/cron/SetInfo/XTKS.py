@@ -26,11 +26,6 @@ def setCsv(row):
         tp =  Volume * Close
         data = yf.Ticker(xtks)
 
-        #print(data.balance_sheet)
-
-        #print(data.quarterly_cashflow)
-        #print(data.financials)
-
         with conn.cursor() as cursor:
             sql = ("SELECT count(1) as count FROM marketstockinfo WHERE marketstock_id=%s")
             cursor.execute(sql, (row['id']))
