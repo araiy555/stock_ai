@@ -50,7 +50,7 @@ def week(pair):
     data = web.get_data_yahoo(code, end, start)
 
     # 最終日（今日）の終値（リアルタイム値）を返す
-    return data['Close'][-6]
+    return data['Close'][-5]
 
 def img(pair):
 

@@ -29,9 +29,12 @@ def today(pair):
     today = today.strftime('%Y-%m-%d')
 
     # 為替pairを所定の形に変更
-    code = f'{pair}=X'
+    code = pair
     # dataの取得
+
     data = web.get_data_yahoo(code, today)
+    print(data)
+
     # 最終日（今日）の終値（リアルタイム値）を返す
     return data['Close'][-1]
 
@@ -44,7 +47,7 @@ def week(pair):
     end = end.strftime('%Y-%m-%d')
 
      # 為替pairを所定の形に変更
-    code = f'{pair}=X'
+    code = pair
 
     # dataの取得
     data = web.get_data_yahoo(code, end, start)
@@ -57,13 +60,13 @@ def img(pair):
    start = datetime.date(2015,1,1)
    end = datetime.date.today()
 
-   data_YD = web.DataReader('USDJPY=X', 'yahoo', start, end) #get data
+   data_YD = web.DataReader('^SSEC', 'yahoo', start, end) #get data
 
-   plt.plot(data_YD['Adj Close'],label='USDJPY')
-   plt.title("USDJPY")
+   plt.plot(data_YD['Adj Close'],label='SSEC')
+   plt.title("SSEC")
    plt.xlabel('date')
-   plt.ylabel('USDJPY')
-   plt.savefig("../../img/USDJPY.png")
+   plt.ylabel('SSEC')
+   plt.savefig("../../img/SSEC.png")
    plt.legend()
    plt.show()
 
@@ -75,20 +78,20 @@ conn = pm.connect(**DATABASE)
 cursor = conn.cursor()
 
 sql = ("SELECT count(1) as count FROM moneyorder WHERE code_name=%s")
-cursor.execute(sql, 'USDJPY')
+cursor.execute(sql, 'SSEC')
 result = cursor.fetchone()
 
-TODAY = today('USDJPY')
-WEEK = week('USDJPY')
-result2 = img('USDJPY')
+TODAY = today('^SSEC')
+WEEK = week('^SSEC')
+result2 = img('SSEC')
 
 if result['count'] == 0:
     sql = ('INSERT INTO moneyorder (code_name, today, week) VALUES (%s, %s, %s)')
-    cursor.execute(sql, ('USDJPY', TODAY, WEEK))
+    cursor.execute(sql, ('SSEC', TODAY, WEEK))
     conn.commit()
 else:
     sql = ('UPDATE moneyorder SET today = %s, week = %s , create_at = %s WHERE code_name = %s')
-    cursor.execute(sql, (TODAY, WEEK, time.strftime('%Y-%m-%d %H:%M:%S'), 'USDJPY'))
+    cursor.execute(sql, (TODAY, WEEK, time.strftime('%Y-%m-%d %H:%M:%S'), 'SSEC'))
 
 conn.commit()
 conn.close()
@@ -97,6 +100,6 @@ conn.close()
 
 
 # -----------------------------------------------------------------------------------
-# Symble指定は "JPY=X" でも "USDJPY=X" でも同じ。 開始日/終了日は date型でも指定可能
+# Symble指定は "JPY=X" でも "SSEC=X" でも同じ。 開始日/終了日は date型でも指定可能
 #  https://info.finance.yahoo.co.jp/fx/detail/?code=EURJPY=FX
 # -----------------------------------------------------------------------------------

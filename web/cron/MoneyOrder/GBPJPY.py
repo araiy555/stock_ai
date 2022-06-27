@@ -57,13 +57,13 @@ def img(pair):
    start = datetime.date(2015,1,1)
    end = datetime.date.today()
 
-   data_YD = web.DataReader('USDJPY=X', 'yahoo', start, end) #get data
+   data_YD = web.DataReader('GBPJPY=X', 'yahoo', start, end) #get data
 
-   plt.plot(data_YD['Adj Close'],label='USDJPY')
-   plt.title("USDJPY")
+   plt.plot(data_YD['Adj Close'],label='GBPJPY')
+   plt.title("GBPJPY")
    plt.xlabel('date')
-   plt.ylabel('USDJPY')
-   plt.savefig("../../img/USDJPY.png")
+   plt.ylabel('GBPJPY')
+   plt.savefig("../../img/GBPJPY.png")
    plt.legend()
    plt.show()
 
@@ -75,20 +75,20 @@ conn = pm.connect(**DATABASE)
 cursor = conn.cursor()
 
 sql = ("SELECT count(1) as count FROM moneyorder WHERE code_name=%s")
-cursor.execute(sql, 'USDJPY')
+cursor.execute(sql, 'GBPJPY')
 result = cursor.fetchone()
 
-TODAY = today('USDJPY')
-WEEK = week('USDJPY')
-result2 = img('USDJPY')
+TODAY = today('GBPJPY')
+WEEK = week('GBPJPY')
+result2 = img('GBPJPY')
 
 if result['count'] == 0:
     sql = ('INSERT INTO moneyorder (code_name, today, week) VALUES (%s, %s, %s)')
-    cursor.execute(sql, ('USDJPY', TODAY, WEEK))
+    cursor.execute(sql, ('GBPJPY', TODAY, WEEK))
     conn.commit()
 else:
     sql = ('UPDATE moneyorder SET today = %s, week = %s , create_at = %s WHERE code_name = %s')
-    cursor.execute(sql, (TODAY, WEEK, time.strftime('%Y-%m-%d %H:%M:%S'), 'USDJPY'))
+    cursor.execute(sql, (TODAY, WEEK, time.strftime('%Y-%m-%d %H:%M:%S'), 'GBPJPY'))
 
 conn.commit()
 conn.close()
@@ -97,6 +97,6 @@ conn.close()
 
 
 # -----------------------------------------------------------------------------------
-# Symble指定は "JPY=X" でも "USDJPY=X" でも同じ。 開始日/終了日は date型でも指定可能
+# Symble指定は "JPY=X" でも "GBPJPY=X" でも同じ。 開始日/終了日は date型でも指定可能
 #  https://info.finance.yahoo.co.jp/fx/detail/?code=EURJPY=FX
 # -----------------------------------------------------------------------------------

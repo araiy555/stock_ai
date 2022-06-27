@@ -56,6 +56,15 @@ log "XNAS.php 処理終了"
 /usr/local/php/7.3/bin/php XTKS.php
 log "XTKS.php 処理終了"
 
+cd ../trend
+/usr/local/bin/python3 XNAS.py
+log "XNAS.py 処理終了"
+/usr/local/bin/python3 XTKS.py
+log "XTKS.py 処理終了"
+
+
+
+
 # marketstockテーブルの翻訳
 
 cd ../../

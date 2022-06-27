@@ -50,7 +50,7 @@ def week(pair):
     data = web.get_data_yahoo(code, end, start)
 
     # 最終日（今日）の終値（リアルタイム値）を返す
-    return data['Close'][-6]
+    return data['Close'][-5]
 
 def img(pair):
 
@@ -81,7 +81,6 @@ result = cursor.fetchone()
 TODAY = today('EURJPY')
 WEEK = week('EURJPY')
 result2 = img('EURJPY')
-print(result2)
 
 if result['count'] == 0:
     sql = ('INSERT INTO moneyorder (code_name, today, week) VALUES (%s, %s, %s)')
