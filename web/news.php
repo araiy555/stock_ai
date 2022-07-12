@@ -12,6 +12,7 @@ try {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, 'https://newsapi.org/v2/top-headlines?country=jp&category=business&apiKey=d04fe253ccbc4b80b3de989cda8cf68b');
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($curl, CURLOPT_USERAGENT, 'ua2');
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // 証明書の検証を行わない
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);  // curl_execの結果を文字列で返す
     $response = curl_exec($curl);

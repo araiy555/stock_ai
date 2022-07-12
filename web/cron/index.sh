@@ -65,7 +65,7 @@ log "XTKS.py 処理終了"
 cd ../MoneyOrder
 
 /usr/local/bin/python3 index.py
-log "MoneyOrder　処理終了"
+log "MoneyOrder 処理終了"
 
 
 # marketstockテーブルの翻訳

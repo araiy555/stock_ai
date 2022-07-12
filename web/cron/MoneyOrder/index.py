@@ -33,6 +33,7 @@ def today(pair):
     # dataの取得
     data = web.get_data_yahoo(code, today)
     # 最終日（今日）の終値（リアルタイム値）を返す
+
     return data['Close'][-1]
 
 def week(pair):
@@ -48,9 +49,10 @@ def week(pair):
 
     # dataの取得
     data = web.get_data_yahoo(code, end, start)
-
+    print(pair)
+    print(data['Close'])
     # 最終日（今日）の終値（リアルタイム値）を返す
-    return data['Close'][-5]
+    return data['Close'][-2]
 
 def img(pair):
 
