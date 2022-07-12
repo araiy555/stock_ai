@@ -20,43 +20,16 @@ function log () {
 # ----------------------------------------------------------------------
 while :
 do
-# 処理開始logを出力
-# 手順　marketstockテーブルからCSVを作成する。
-# CSVからmarketstockindexに格納する
 
 log "処理開始"
 
 # CSVファイルの作成
 cd
-cd ./web/cron/StockData
-/usr/local/bin/python3 INDX.py
-log "INDX.py 処理終了"
-/usr/local/bin/python3 XNAS.py
-log "XNAS.py 処理終了"
-/usr/local/bin/python3 XTKS.py
-log "XTKS.py 処理終了"
-
-# 株情報の保存
-
-cd ../SetInfo
-/usr/local/bin/python3 INDX.py
-log "INDX.py 処理終了"
-/usr/local/bin/python3 XNAS.py
-log "XNAS.py 処理終了"
-/usr/local/bin/python3 XTKS.py
-log "XTKS.py 処理終了"
-
-# 株のチャート情報
-
-cd ../SetDbCSV
-/usr/local/php/7.3/bin/php INDX.php
-log "INDX.php 処理終了"
-/usr/local/php/7.3/bin/php XNAS.php
-log "XNAS.php 処理終了"
-/usr/local/php/7.3/bin/php XTKS.php
-log "XTKS.php 処理終了"
+cd ./web/
+/usr/local/php/7.3/bin/php markettranslation.php
 
 log "処理終了"
+
 
 done
 ##https://icooon-mono.com/
