@@ -33,7 +33,7 @@ INNER JOIN marketstockindex as msi ON msi.marketstock_id = ms.id
 INNER JOIN marketstockinfo as info ON info.marketstock_id = ms.id
 LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
 WHERE ms.mic = '$market'
-ORDER BY $secter
+ORDER BY '$market'
 ";
 }
     $result = $pdo->query($sql);
