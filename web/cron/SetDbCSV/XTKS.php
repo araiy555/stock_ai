@@ -71,7 +71,7 @@ function getStock($dbh, $id)
 
 function getChart($dbh)
 {
-    $sql = "SELECT id,symbol FROM marketstock WHERE mic = 'XTKS'";
+    $sql = "SELECT id,symbol FROM marketstock WHERE stock_exchange_country = 'japan'";
 
     $result = $dbh->query($sql);
 

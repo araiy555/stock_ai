@@ -34,7 +34,7 @@ conn = mysql.connector.connect(
 # カーソル作成
 cur = conn.cursor()
 
-sql = "SELECT * FROM marketstock WHERE mic = 'XNAS'"
+sql = "SELECT * FROM marketstock WHERE stock_exchange_country = 'USA'"
 cur.execute(sql)
 
 ret = cur.fetchall()

@@ -83,10 +83,10 @@ def week(pair):
 
         # dataの取得
         data = web.get_data_yahoo(code, end, start)
-        print(data['Close'][-5])
+        print(data['Close'][-2])
         # 最終日（今日）の終値（リアルタイム値）を返す
 
-        return data['Close'][-5]
+        return data['Close'][-2]
     except:
         print('errorweek')
     return 0
@@ -95,7 +95,7 @@ def week(pair):
 conn = pm.connect(**DATABASE)
 
 with conn.cursor() as cursor:
-    sql = "SELECT * FROM marketstock WHERE mic = 'XNAS'"
+    sql = "SELECT * FROM marketstock WHERE stock_exchange_country = 'USA'"
     cursor.execute(sql)
 
 ret = cursor.fetchall()

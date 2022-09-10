@@ -25,11 +25,10 @@ function getDESC($pdo)
 FROM marketstock AS ms
 INNER JOIN market_translation as mt ON mt.marketstock_id = ms.id
 INNER JOIN trend as t ON t.marketstock_id = ms.id
+WHERE t.soaring_rate < 99
 ORDER BY soaring_rate DESC
-LIMIT 5
+LIMIT 20
 ";
-
-
     $result = $pdo->query($sql);
 
     $aryItem = $result->fetchAll();
@@ -42,8 +41,9 @@ function getASC($pdo)
 FROM marketstock AS ms
 INNER JOIN market_translation as mt ON mt.marketstock_id = ms.id
 INNER JOIN trend as t ON t.marketstock_id = ms.id
+WHERE t.soaring_rate < 0
 ORDER BY soaring_rate ASC
-LIMIT 5
+LIMIT 20
 ";
 
     $result = $pdo->query($sql);

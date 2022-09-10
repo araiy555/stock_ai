@@ -21,19 +21,19 @@ function get($pdo, $market, $secter)
 if (!$secter) {
     $sql = "SELECT DISTINCT ms.* ,msi.* , mt.*, info.*
 FROM marketstock AS ms
+INNER JOIN market_translation as mt ON mt.marketstock_id = ms.id
 INNER JOIN marketstockindex as msi ON msi.marketstock_id = ms.id
 INNER JOIN marketstockinfo as info ON info.marketstock_id = ms.id
-LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
-WHERE ms.mic = '$market'";
+WHERE ms.stock_exchange_country = '$market'";
+
 
 } else {
     $sql = "SELECT DISTINCT ms.* ,msi.* , mt.*, info.*
 FROM marketstock AS ms
+INNER JOIN market_translation as mt ON mt.marketstock_id = ms.id
 INNER JOIN marketstockindex as msi ON msi.marketstock_id = ms.id
 INNER JOIN marketstockinfo as info ON info.marketstock_id = ms.id
-LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
-WHERE ms.mic = '$market'
-ORDER BY '$market'
+WHERE  info.sector = '$secter'
 ";
 }
     $result = $pdo->query($sql);

@@ -75,7 +75,7 @@ def img(pair):
 
 
 
-data = ["AUDJPY=X", "CADJPY=X", "^DJI", "EURJPY=X", "GBPJPY=X","^GSPC","^HSI","^KS11","^NDX","^N225","^NSEI","^RUT","USDJPY=X","^VIX"]
+data = ["AUDJPY=X", "CADJPY=X", "^DJI", "EURJPY=X", "GBPJPY=X","^GSPC","^HSI","^KS11","^NDX","^N225","^NSEI","^RUT","USDJPY=X","^VIX","000001.SS","^BSESN"]
 
 for item in data:
 

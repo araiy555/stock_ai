@@ -34,7 +34,7 @@ def SetTrend(row, today, week):
             sql = ("SELECT count(1) as count FROM trend WHERE marketstock_id=%s")
             cursor.execute(sql, (row['id']))
             result = cursor.fetchone()
-            print(result)
+            print(result['count'])
         if result['count'] == 0:
             with conn.cursor() as cursor:
                 sql = ('INSERT INTO trend (marketstock_id, soaring_rate) VALUES (%s, %s)')
@@ -64,6 +64,7 @@ def today(pair):
         # dataの取得
         data = web.get_data_yahoo(code, today)
         # 最終日（今日）の終値（リアルタイム値）を返す
+        print(data['Close'])
         return data['Close'][-1]
     except:
         print('errortoday')
@@ -83,10 +84,9 @@ def week(pair):
 
         # dataの取得
         data = web.get_data_yahoo(code, end, start)
-        print(data['Close'][-5])
         # 最終日（今日）の終値（リアルタイム値）を返す
-
-        return data['Close'][-5]
+        print(data['Close'][-2])
+        return data['Close'][-2]
     except:
         print('errorweek')
     return 0
@@ -95,7 +95,7 @@ def week(pair):
 conn = pm.connect(**DATABASE)
 
 with conn.cursor() as cursor:
-    sql = "SELECT * FROM marketstock WHERE mic = 'XTKS'"
+    sql = "SELECT * FROM marketstock WHERE stock_exchange_country = 'japan'"
     cursor.execute(sql)
 
 ret = cursor.fetchall()

@@ -11,7 +11,6 @@ try {
 
 
     for ($i = 0; $i <= 300; $i++) {
-
         $queryString = http_build_query([
             'access_key' => 'a54e1687262eda9a5362a63844d0e752',
             'limit' => '2000',
@@ -27,10 +26,10 @@ try {
 
         foreach ($apiResult['data'] as $stocksData) {
             $result = getStock($pdo, $stocksData);
-            if ($result[0] < 1) {
-                var_dump(setStock($pdo, $stocksData));
+            if (empty($result['id'])) {
+                setStock($pdo, $stocksData);
             } else {
-                var_dump(setUpdateStock($pdo, $stocksData));
+                setUpdateStock($pdo, $stocksData, $result['id']);
             }
         }
     }
@@ -42,7 +41,7 @@ try {
 function getStock($dbh, $apiResult)
 {
     $symbol = $apiResult['symbol'];
-    $sql = "SELECT count(1) FROM marketstock WHERE symbol = '$symbol'";
+    $sql = "SELECT id FROM marketstock WHERE symbol = '$symbol'";
 
     $result = $dbh->query($sql);
 
@@ -97,10 +96,9 @@ INSERT INTO marketstock (
 }
 
 
-function setUpdateStock($dbh, $apiResult)
+function setUpdateStock($dbh, $apiResult, $id)
 {
 
-    $id = $apiResult['id'];
     $stock_name = $apiResult['name'];
     $symbol = $apiResult['symbol'];
     $has_intraday = $apiResult['has_intraday'];
@@ -128,7 +126,8 @@ UPDATE marketstock SET
       stock_exchange_country =  '$stock_exchange_country',
       stock_exchange_country_code =  '$stock_exchange_country_code',
       city = '$city',
-      website = '$website'
+      website = '$website',
+      update_at = current_timestamp  
 WHERE id = '$id'
 ";
     return $dbh->query($sql);

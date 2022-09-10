@@ -111,7 +111,6 @@ try {
 
 
     foreach ($getStock as $val) {
-
         $closing_price = preg_replace('/\[|\]/', '', $val['closing_price']);
         $closing_price = floor($closing_price);
         $info = json_decode($val['info']);
@@ -144,7 +143,9 @@ try {
             $str = str_replace("Earnings Date     ", "", $match[0]);
 
             $pieces = explode(" ", $str);
-
+            echo '<pre>';
+            var_dump($pieces);
+            echo '<pre>';
             getCalendarUpdate($pdo, $val['id'], (string)($pieces[0]), (string)($pieces[3]));
 
         }
