@@ -27,6 +27,7 @@ def setCsv(row):
         data = yf.Ticker(xtks)
         df_diff = df['Close'].diff()
 
+        print(data.financials)
         string = str(Close).replace("[","").replace("]","")
         df['M25'] = df_diff.rolling(25).mean()
         df['M5'] = df_diff.rolling(5).mean()

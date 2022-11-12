@@ -148,39 +148,19 @@ if (url.match('/')) {
         }).fail(function (data) {
         });
 
+
         jQuery.ajax({
-            url: 'https://stocktown.versus.jp/api/news.php',
+            url: 'https://stocktown.versus.jp/api/tenbagger.php',
             type: 'GET',
             dataType: 'json'
         }).done(function (data) {
-            jQuery('#news_top').append('<h1>ニュース</h1>');
+            jQuery('#tenbagger').append('<h1>テンバガ</h1>');
+            console.log(data);
             jQuery.each(data, function (index, value) {
-                const MAX_LENGTH = 30; //文字数上限
-                let modStr = value.title;
-                let description = value.description;
-                let images = '<img style="width: 100px; height: 100px; border-radius: 10px;" src="' + value.urlToImage + '" onerror="this.src=\'/\'"/ >';
-
-                if (value.title.length > MAX_LENGTH) {
-                    modStr = value.title.substr(0, MAX_LENGTH) + '...'
-                }
-                if (value.description.length > 200) {
-                    description = value.description.substr(0, MAX_LENGTH) + '...'
-                }
-                if (!value.urlToImage) {
-                    images = '';
-                }
-                jQuery('#news').prepend('' +
-                    '<div class="box">\n' +
-                    '  <div class="text">\n' +
-                    '    <h3><a href="' + value.url + '">' + modStr + '</a></h3>\n' +
-                    '    <p class="description">' + description + '</p>\n' +
-                    '    <p class="time"><i class="far fa-clock"></i>' + value.publishedAt + '</p>\n' +
-                    '    <p class="author"><i class="fas fa-at"></i>' + value.author + '</p>\n' +
-                    '  </div>\n' +
-                    ' <div class="pict"></div>' +
-                    '</div>\n');
+                jQuery('#tenbagger_list').append('<tr>\n' +
+                    '<td><a href="/stock?value=' + value.symbol + '">' + value.stock_name + '</a></td>\n' +
+                    '</tr>');
             });
-
         }).fail(function (data) {
         });
     });

@@ -9,24 +9,19 @@ header('Access-Control-Allow-Origin: *');
 try {
     /// DB接続を試みる
     $pdo = new PDO("mysql:host=" . $server . "; dbname=" . $database, $user, $pass);
-    $result = getNews($pdo, $_GET['search']);
+    $result = get($pdo);
     echo json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLAS);
 } catch (PDOException $e) {
     $isConnect = false;
     echo "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
 }
 
-function getNews($pdo, $val)
+function get($pdo)
 {
 
-    $sql = "SELECT ms.*, msc.*, msid.*, msi.closing_price, msi.open_price, msi.high_price, msi.low_price, msi.volume, msi.trading_price, msi.deviation, msi.data as info, msi.financials as qf, msi.balance_sheet ,mt.*
+    $sql = "SELECT ms.*
 FROM marketstock AS ms
-INNER JOIN marketstockchart as msc ON msc.marketstock_id = ms.id
-INNER JOIN marketstockinfo as msi ON msi.marketstock_id = ms.id
-INNER JOIN marketstockindex as msid ON msid.marketstock_id = ms.id
-LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
-WHERE ms.stock_name LIKE '$val' OR ms.symbol LIKE '$val' OR mt.overview LIKE '$val'";
-
+INNER JOIN tenbagger as t ON t.marketstock_id = ms.id";
 
     $result = $pdo->query($sql);
 

@@ -44,6 +44,7 @@ function honyaku($source_text)
 
 function set($dbh, $id, $longBusinessSummary, $stock_name)
 {
+    var_dump($stock_name);
     $sql = "
 INSERT INTO market_translation (
       marketstock_id,

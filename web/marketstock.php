@@ -25,6 +25,7 @@ try {
         $apiResult = json_decode($json, true);
 
         foreach ($apiResult['data'] as $stocksData) {
+            var_dump($stocksData);
             $result = getStock($pdo, $stocksData);
             if (empty($result['id'])) {
                 setStock($pdo, $stocksData);

@@ -16,7 +16,6 @@ def setCsv(row):
      indx = '^' + indx
      df_ntt = web.DataReader(indx ,"yahoo","1980/1/1")
      df_ntt.to_csv('../../csv/INDX/' + indx + '.csv')
-     print('ok' + indx)
     except:
       f = open('../../csv/INDX/' + indx + '.csv', 'w')
       f.write('')  # 何も書き込まなくてファイルは作成されました

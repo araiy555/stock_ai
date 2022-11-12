@@ -31,12 +31,16 @@ try {
 
                 $row++;
             }
+            $first = array_key_first($test);
+
+            var_dump($test[$first][0]);
+
             $data = json_encode($test);
             $getChart = getStock($pdo, $val['id']);
             if ($getChart[0] < 1) {
-                setChart($pdo, $val['id'], $data);
+                setChart($pdo, $val['id'], $data, $test[$first][0]);
             } else {
-                setChartUpdate($pdo, $val['id'], $data);
+                setChartUpdate($pdo, $val['id'], $data, $test[$first][0]);
             }
             fclose($handle);
         }
@@ -46,11 +50,12 @@ try {
     echo "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
 }
 
-function setChartUpdate($pdo, $id, $data)
+function setChartUpdate($pdo, $id, $data, $listing_date)
 {
     $sql = "
 UPDATE marketstockchart SET 
       data = '$data',
+      listing_date = '$listing_date',
       update_at = current_timestamp  
 WHERE marketstock_id = '$id'
 ";
@@ -78,16 +83,18 @@ function getChart($dbh)
     return $aryItem;
 }
 
-function setChart($dbh, $id, $val)
+function setChart($dbh, $id, $val, $listing_date)
 {
     $sql = "
 INSERT INTO marketstockchart (
       marketstock_id,
       data,
       update_at
+      listing_date
     ) values (
        '$id',
        '$val',
+       '$listing_date',
         current_timestamp
     )";
     return $dbh->query($sql);

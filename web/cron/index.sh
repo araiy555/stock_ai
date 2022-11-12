@@ -32,9 +32,11 @@ cd ../trend
 /usr/local/bin/python3 XNAS.py
 /usr/local/bin/python3 XTKS.py
 
+cd ../tenbagger
+/usr/local/php/7.3/bin/php index.php
+
 cd ../../
 /usr/local/php/7.3/bin/php markettranslation.php
-
 
 done
 ##https://icooon-mono.com/
