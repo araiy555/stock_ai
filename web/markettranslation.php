@@ -42,9 +42,43 @@ function honyaku($source_text)
     return $result->translations[0]->text;
 }
 
+function delete($dbh)
+{
+    $sql = "
+DELETE FROM market_translation WHERE company = '' OR overview = ''
+";
+    return $dbh->query($sql);
+
+}
+
+
+
+function update2($dbh, $id, $longBusinessSummary, $stock_name) {
+    $sql = "
+UPDATE market_translation 
+SET 
+    company = '$longBusinessSummary',  
+    overview = '$stock_name',  
+    update_at = current_timestamp  
+WHERE marketstock_id = '$id'
+";
+
+    return $dbh->query($sql);
+}
+
+
+function update($dbh, $id) {
+    $sql = "
+UPDATE marketstock SET 
+      translation_flag = 1,
+WHERE id = '$id'
+";
+
+    return $dbh->query($sql);
+}
+
 function set($dbh, $id, $longBusinessSummary, $stock_name)
 {
-    var_dump($stock_name);
     $sql = "
 INSERT INTO market_translation (
       marketstock_id,
@@ -75,15 +109,42 @@ function check($pdh, $id)
 function get($pdo)
 {
 
-    $sql = "SELECT ms.id, ms.stock_name, msi.data as info 
+    $sql = "SELECT ms.id, ms.stock_name
 FROM marketstock AS ms
-INNER JOIN marketstockinfo as msi ON msi.marketstock_id = ms.id";
+WHERE ms.translation_flag = 0
+";
 
     $result = $pdo->query($sql);
 
     $aryItem = $result->fetchAll();
+
     return $aryItem;
 }
+
+function translationFlagCount($pdo)
+{
+
+    $sql = "SELECT count(translation_flag)
+FROM marketstock AS ms
+WHERE translation_flag = 0
+";
+
+    $result = $pdo->query($sql);
+
+    $aryItem = $result->fetchAll();
+
+    return $aryItem;
+}
+
+function translationFlagUpdate($pdo) {
+    $sql = "
+UPDATE marketstock SET 
+      translation_flag = 0,
+";
+
+    return $pdo->query($sql);
+}
+
 
 
 try {
@@ -91,23 +152,50 @@ try {
     /// DB接続を試みる
     $pdo = new PDO("mysql:host=" . $server . "; dbname=" . $database, $user, $pass);
 
+    delete($pdo);
     $getStock = get($pdo);
+
     foreach ($getStock as $val) {
 
-        $rel = check($pdo, $val['id']);
-        if ($rel[0] < 1) {
+        $stock_name = honyaku($val['stock_name']);
+        $info = json_decode($val['info']);
 
-            $stock_name = honyaku($val['stock_name']);
-            $info = json_decode($val['info']);
-            $longBusinessSummary = honyaku($info->longBusinessSummary);
+        $longBusinessSummary = honyaku($info->longBusinessSummary);
 
-            if ($longBusinessSummary !== null || $stock_name !== null) {
+        if ($longBusinessSummary !== null || $stock_name !== null) {
+            $result = check($pdo, $val['id']);
+
+            if ($result[0] === 0) {
                 set($pdo, $val['id'], $longBusinessSummary, $stock_name);
+                update($pdo, $val['id']);
+            } else {
+                update2($pdo, $val['id'], $longBusinessSummary, $stock_name);
+                update($pdo, $val['id']);
             }
         }
+    }
+
+    $translationFlagCount = translationFlagCount($pdo);
+    if ($translationFlagCount[0] === 0) {
+        translationFlagUpdate($pdo);
     }
 
 } catch (PDOException $e) {
     $isConnect = false;
     echo "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
 }
+
+
+
+//重複削除
+//SELECT * FROM market_translation
+//WHERE (marketstock_id) IN (
+//    select marketstock_id as c
+//		from
+//			market_translation
+//        where
+//		group by
+//			c
+// 		having
+// 			count(c) >= 2
+//)

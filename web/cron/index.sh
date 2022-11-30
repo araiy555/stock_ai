@@ -9,9 +9,9 @@ cd ./web/cron/StockData
 /usr/local/bin/python3 INDX.py
 /usr/local/bin/python3 XNAS.py
 /usr/local/bin/python3 XTKS.py
-
-# 株情報の保存
-
+#
+## 株情報の保存
+#
 cd ../SetInfo
 /usr/local/bin/python3 INDX.py
 /usr/local/bin/python3 XNAS.py

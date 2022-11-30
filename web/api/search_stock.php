@@ -25,7 +25,7 @@ INNER JOIN marketstockindex as msi ON msi.marketstock_id = ms.id
 INNER JOIN marketstockinfo as msinfo ON msinfo.marketstock_id = ms.id
 INNER JOIN market_translation as mt ON mt.marketstock_id = ms.id
 
-WHERE mt.company LIKE '%$val%' OR mt.overview LIKE '%$val%'";
+WHERE mt.company LIKE '%$val%' OR mt.overview LIKE '%$val%' OR ms.symbol LIKE '%$val%'";
 
     $result = $pdo->query($sql);
 

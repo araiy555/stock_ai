@@ -109,7 +109,9 @@ article div .Post-body blockquote {
   width: 25%;
   padding: 10px;
 }
-
+.navigation {
+  text-align: center;
+}
 /*@media screen and (max-width: 960px) {*/
 /*  .col_4 > div {*/
 /*    width: 33.33333%;*/

@@ -309,6 +309,7 @@ if (url.match('stock')) {
         cache: false,
         data: {search: getParam('value')}
     }).done(function (data) {
+            console.log(data);
             if (!data.length) {
                 alert('申し訳ありません。株情報が存在しません。');
             }
@@ -330,7 +331,7 @@ if (url.match('stock')) {
             let low_price = parseInt(data[0].low_price.replace(/\[/, ' ').replace(/\]/, ' '), 10);
             let volume = parseInt(data[0].volume.replace(/\[/, ' ').replace(/\]/, ' '), 10);
 
-            jQuery('#update_day').text('前日比 (' + data[0][23] + ')');
+            jQuery('#update_day').text('前日比 (' + data[0][24] + ')');
             jQuery('#closing_price').text(closing_price);
             jQuery('#open_price').text(open_price);
             jQuery('#high_price').text(high_price);
@@ -340,7 +341,6 @@ if (url.match('stock')) {
             jQuery('#deviation').text(data[0].deviation + '%');
 
             let info = JSON.parse(data[0].info);
-            console.log(data[0].qf);
 
             if (data[0].qf != '') {
 
@@ -672,6 +672,85 @@ if (url.match('news')) {
 
 
 if (url.match('cheap')) {
+
+    jQuery.ajax({
+        url: 'https://stocktown.versus.jp/api/screening.php',
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            market: getParam('market'),
+            limit: 100
+        }
+    }).done(function (data) {
+        jQuery.each(data, function (index, value) {
+            if (value.overview == null) {
+                stock_name = value.stock_name;
+            } else {
+                stock_name = value.overview;
+            }
+
+
+            if (value.company == null) {
+                company = '-';
+            } else {
+                company = value.company;
+            }
+
+
+
+            jQuery('#osusume').append('' +
+                '    <tr><td><div><a href="/stock?value=' + value.symbol + '">' + stock_name + '</a></div></td>\n' +
+                '      </tr>');
+        });
+
+        let count = parseInt(jQuery('#count').val(), 10) + 1;
+        jQuery("#count").val(count);
+
+        jQuery(".navigation").click(function(){
+            let count = parseInt(jQuery('#count').val(), 10) + 1;
+            jQuery("#count").val(count);
+
+            let counts = count * 100;
+
+            // 最下部に到達したときに実行する処理
+            jQuery.ajax({
+                url: 'https://stocktown.versus.jp/api/screening.php',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    market: getParam('market'),
+                    limit: counts
+                }
+            }).done(function (data) {
+                jQuery.each(data, function (index, value) {
+                    if (value.overview == null) {
+                        stock_name = value.stock_name;
+                    } else {
+                        stock_name = value.overview;
+                    }
+
+                    if (value.company == null) {
+                        company = '-';
+                    } else {
+                        company = value.company;
+                    }
+
+
+                    jQuery('#osusume').append('' +
+                        '    <tr><td><div><a href="/stock?value=' + value.symbol + '">' + stock_name + '</a></div></td>\n' +
+                        '      </tr>');
+                });
+            }).fail(function (data) {
+                alert('通信失敗！');
+            });
+        });
+
+    }).fail(function (data) {
+        alert('通信失敗！');
+    });
+}
+
+if (url.match('screening')) {
     jQuery.ajax({
         url: 'https://stocktown.versus.jp/api/cheap.php',
         type: 'GET',
@@ -773,11 +852,19 @@ if (url.match('earnings_calendar')) {
         type: 'GET',
         dataType: 'json'
     }).done(function (data) {
+
+
         jQuery.each(data, function (index, value) {
+
+            if (value.overview == null) {
+                stock_name = value.stock_name;
+            } else {
+                stock_name = value.overview;
+            }
             jQuery('#osusume').append('' +
                 '<tr>' +
                 '<td class="icon bird"><div>' +
-                '<a href="/p/stock?value=' + value.symbol + '">' + value.overview + '</a></div></td>\n' +
+                '<a href="/p/stock?value=' + value.symbol + '">' + stock_name+ '</a></div></td>\n' +
                 '<td><div>' + value.calendar_start + ' ～ ' + value.calendar_end + '</div></td>\n' +
                 '      </tr>');
         });
