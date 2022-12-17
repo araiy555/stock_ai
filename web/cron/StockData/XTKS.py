@@ -13,9 +13,9 @@ def setCsv(row):
      ##start = datetime.date.today()
      ##df_ntt = web.DataReader(row[2],"yahoo" , start, end)
      xtks = row[2].replace('XTKS', 'T')
-     df_ntt = web.DataReader(xtks ,"yahoo","1980/1/1")
+
+     df_ntt = web.DataReader(xtks.replace('.B', '-B').replace('.A', '-A') ,"yahoo","1980/1/1")
      df_ntt.to_csv('../../csv/XTKS/' + xtks + '.csv')
-     print('ok' + xtks)
     except:
       f = open('../../csv/XTKS/' + xtks + '.csv', 'w')
       f.write('')  # 何も書き込まなくてファイルは作成されました
@@ -35,7 +35,7 @@ conn = mysql.connector.connect(
 # カーソル作成
 cur = conn.cursor()
 
-sql = "SELECT * FROM marketstock WHERE stock_exchange_country = 'japan'"
+sql = "SELECT * FROM marketstock WHERE stock_exchange_country = 'japan' AND mic = 'XTKS'"
 cur.execute(sql)
 
 ret = cur.fetchall()

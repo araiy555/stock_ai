@@ -17,7 +17,8 @@ import time
 def setCsv(row):
     try:
         xtks = row['symbol'].replace('XTKS', 'T')
-        df = web.DataReader(xtks, "yahoo")
+        df = web.DataReader(xtks.replace('.B', '-B').replace('.A', '-A'), "yahoo")
+
         Open = df.tail(1)['Open'].values
         High = df.tail(1)['High'].values
         Low = df.tail(1)['Low'].values
@@ -27,7 +28,6 @@ def setCsv(row):
         data = yf.Ticker(xtks)
         df_diff = df['Close'].diff()
 
-        print(data.financials)
         string = str(Close).replace("[","").replace("]","")
         df['M25'] = df_diff.rolling(25).mean()
         df['M5'] = df_diff.rolling(5).mean()
@@ -56,22 +56,16 @@ def setCsv(row):
             sql = ("SELECT count(1) as count FROM marketstockinfo WHERE marketstock_id=%s")
             cursor.execute(sql, (row['id']))
             result = cursor.fetchone()
-
-            print(result)
         if result['count'] == 0:
             with conn.cursor() as cursor:
-                   sql = ('INSERT INTO marketstockinfo (marketstock_id, closing_price, open_price, high_price, low_price, volume, deviation, trading_price, data, balance_sheet, dividends, splits, financials, quarterly_financials, major_holders, institutional_holders, cashflow, earnings, sustainability, recommendations, calendar, isin, options, news, sector, industry) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s, %s, %s, %s)')
-                   cursor.execute(sql, (row['id'], str(Close), str(Open), str(High), str(Low), str(Volume), deviation, str(tp), json.dumps(data.info), str(data.balance_sheet), str(data.dividends), str(data.splits), str(data.financials), str(data.quarterly_financials), str(data.major_holders), str(data.institutional_holders), str(data.cashflow), str(data.earnings), str(data.sustainability), str(data.recommendations), str(data.calendar), str(data.isin), str(data.options), str(data.info['sector']), str(data.info['industry'])))
-
+                   sql = ('INSERT INTO marketstockinfo (marketstock_id, closing_price, open_price, high_price, low_price, volume, deviation, trading_price, data, balance_sheet, dividends, splits, financials, quarterly_financials, major_holders, institutional_holders, cashflow, earnings, sustainability, recommendations, calendar, isin, options, sector, industry, update_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)')
+                   cursor.execute(sql, (row['id'], str(Close), str(Open), str(High), str(Low), str(Volume), deviation, str(tp), json.dumps(data.info), str(data.balance_sheet), str(data.dividends), str(data.splits), str(data.financials), str(data.quarterly_financials), str(data.major_holders), str(data.institutional_holders), str(data.cashflow), str(data.earnings), str(data.sustainability), str(data.recommendations), str(data.calendar), str(data.isin), str(data.options), str(data.info['sector']), str(data.info['industry']), time.strftime('%Y-%m-%d %H:%M:%S')))
                    conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
-                   print('insert ok' + xtks)
         else:
             with conn.cursor() as cursor:
                         sql = ('UPDATE marketstockinfo SET closing_price = %s, open_price = %s, high_price = %s, low_price = %s, volume = %s, deviation = %s, trading_price = %s, data = %s, balance_sheet = %s, dividends = %s, splits = %s, financials = %s, quarterly_financials = %s, major_holders = %s, institutional_holders = %s, cashflow = %s, earnings = %s, sustainability = %s, recommendations = %s, calendar = %s, isin = %s, options = %s , sector = %s, industry = %s, update_at = %s WHERE marketstock_id = %s')
                         cursor.execute(sql, (str(Close), str(Open), str(High), str(Low), str(Volume), deviation, str(tp), json.dumps(data.info), str(data.balance_sheet), str(data.dividends), str(data.splits), str(data.financials), str(data.quarterly_financials), str(data.major_holders), str(data.institutional_holders), str(data.cashflow), str(data.earnings), str(data.sustainability), str(data.recommendations), str(data.calendar), str(data.isin), str(data.options), str(data.info['sector']), str(data.info['industry']), time.strftime('%Y-%m-%d %H:%M:%S'), row['id']))
-
-                        conn.commit() # コミットし、更新を反映->こないとDBにデータ流れない
-                        print('update ok' + xtks)
+                        conn.commit()
     except:
         print('error' + xtks)
     return 0
@@ -88,7 +82,7 @@ DATABASE = {
 conn = pm.connect(**DATABASE)
 
 with conn.cursor() as cursor:
-    sql = "SELECT * FROM marketstock WHERE stock_exchange_country = 'japan'"
+    sql = "SELECT * FROM marketstock WHERE stock_exchange_country = 'japan' AND mic = 'XTKS'"
     cursor.execute(sql)
 
 ret = cursor.fetchall()

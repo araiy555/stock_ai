@@ -33,7 +33,6 @@ try {
                 $row++;
             }
             $first = array_key_first($test);
-            var_dump($test[$first][0]);
 
             $data = json_encode($test);
             $getChart = getStock($pdo, $val['id']);

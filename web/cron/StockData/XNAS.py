@@ -6,15 +6,15 @@ import numpy as np
 import pandas_datareader.data as web
 import mysql.connector
 import time
-
 def setCsv(row):
     try:
      ##end = dt.date.today()
      ##start = datetime.date.today()
      ##df_ntt = web.DataReader(row[2],"yahoo" , start, end)
-     df_ntt = web.DataReader(row[2],"yahoo","1980/1/1")
+
+     df_ntt = web.DataReader(row[2].replace('.B', '-B').replace('.A', '-A'),"yahoo","1980/1/1")
      df_ntt.to_csv('../../csv/XNAS/' + row[2] + '.csv')
-     print('ok' + row[2])
+
     except:
       f = open('../../csv/XNAS/' + row[2] + '.csv', 'w')
       f.write('')  # 何も書き込まなくてファイルは作成されました

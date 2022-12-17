@@ -148,21 +148,6 @@ if (url.match('/')) {
         }).fail(function (data) {
         });
 
-
-        jQuery.ajax({
-            url: 'https://stocktown.versus.jp/api/tenbagger.php',
-            type: 'GET',
-            dataType: 'json'
-        }).done(function (data) {
-            jQuery('#tenbagger').append('<h1>テンバガ</h1>');
-            console.log(data);
-            jQuery.each(data, function (index, value) {
-                jQuery('#tenbagger_list').append('<tr>\n' +
-                    '<td><a href="/stock?value=' + value.symbol + '">' + value.stock_name + '</a></td>\n' +
-                    '</tr>');
-            });
-        }).fail(function (data) {
-        });
     });
 }
 
@@ -331,7 +316,7 @@ if (url.match('stock')) {
             let low_price = parseInt(data[0].low_price.replace(/\[/, ' ').replace(/\]/, ' '), 10);
             let volume = parseInt(data[0].volume.replace(/\[/, ' ').replace(/\]/, ' '), 10);
 
-            jQuery('#update_day').text('前日比 (' + data[0][24] + ')');
+            jQuery('#update_day').text('前日比 (' + data[0]['update_at'] + ')');
             jQuery('#closing_price').text(closing_price);
             jQuery('#open_price').text(open_price);
             jQuery('#high_price').text(high_price);
@@ -343,7 +328,7 @@ if (url.match('stock')) {
             let info = JSON.parse(data[0].info);
 
             if (data[0].qf != '') {
-
+                console.log(data[0].qf);
                 let quarterly_financials = data[0].qf;
                 let Era_name = quarterly_financials.match(/.*/);
                 let en = Era_name[0].split(/\s/);
@@ -389,9 +374,9 @@ if (url.match('stock')) {
                 jQuery('#gross_profit3').text(arr3[3]);
             }
 
-        // let balance_sheet = data[0].balance_sheet.replace(/(\s|&nbsp;)+/g, ' ');
+            // let balance_sheet = data[0].balance_sheet.replace(/(\s|&nbsp;)+/g, ' ');
             //
-           // let bs = quarterly_financials.match(/Total Stockholder Equity (.\S*)/);
+            // let bs = quarterly_financials.match(/Total Stockholder Equity (.\S*)/);
             //
             // let bps = info.sharesOutstanding / 321195000;
             //
@@ -509,7 +494,6 @@ if (url.match('stock')) {
 
             var chart = new ApexCharts(document.querySelector("#chart-line2"), optionsLine);
             chart.render();
-
 
 
         }
@@ -682,13 +666,17 @@ if (url.match('cheap')) {
             limit: 100
         }
     }).done(function (data) {
+        const MAX_LENGTH = 30; //文字数上限
+
         jQuery.each(data, function (index, value) {
+
+            let info = JSON.parse(value.data);
+
             if (value.overview == null) {
                 stock_name = value.stock_name;
             } else {
                 stock_name = value.overview;
             }
-
 
             if (value.company == null) {
                 company = '-';
@@ -696,17 +684,24 @@ if (url.match('cheap')) {
                 company = value.company;
             }
 
-
+            let modStr = stock_name;
+            let description = company;
+            let images = '<img style="width: 100px; height: 100px; border-radius: 10px;" src="' + info.logo_url + '"/>';
 
             jQuery('#osusume').append('' +
-                '    <tr><td><div><a href="/stock?value=' + value.symbol + '">' + stock_name + '</a></div></td>\n' +
-                '      </tr>');
+                '<div class="box">\n' +
+                '  <div class="text">\n' +
+                '    <h3><a href="/stock?value=' + value.symbol + '">' + modStr + '</a></h3>\n' +
+                '    <p class="description">' + description + '</p>\n' +
+                '  </div>\n' +
+                ' <div class="pict">' + images + '</div>' +
+                '</div>\n');
         });
 
         let count = parseInt(jQuery('#count').val(), 10) + 1;
         jQuery("#count").val(count);
 
-        jQuery(".navigation").click(function(){
+        jQuery(".navigation").click(function () {
             let count = parseInt(jQuery('#count').val(), 10) + 1;
             jQuery("#count").val(count);
 
@@ -723,6 +718,9 @@ if (url.match('cheap')) {
                 }
             }).done(function (data) {
                 jQuery.each(data, function (index, value) {
+
+                    let info = JSON.parse(value.data);
+
                     if (value.overview == null) {
                         stock_name = value.stock_name;
                     } else {
@@ -735,11 +733,20 @@ if (url.match('cheap')) {
                         company = value.company;
                     }
 
+                    let modStr = stock_name;
+                    let description = company;
+                    let images = '<img style="width: 100px; height: 100px; border-radius: 10px;" src="' + info.logo_url + '"/>';
 
                     jQuery('#osusume').append('' +
-                        '    <tr><td><div><a href="/stock?value=' + value.symbol + '">' + stock_name + '</a></div></td>\n' +
-                        '      </tr>');
+                        '<div class="box">\n' +
+                        '  <div class="text">\n' +
+                        '    <h3><a href="/stock?value=' + value.symbol + '">' + modStr + '</a></h3>\n' +
+                        '    <p class="description">' + description + '</p>\n' +
+                        '  </div>\n' +
+                        ' <div class="pict">' + images + '</div>' +
+                        '</div>\n');
                 });
+
             }).fail(function (data) {
                 alert('通信失敗！');
             });
@@ -749,6 +756,113 @@ if (url.match('cheap')) {
         alert('通信失敗！');
     });
 }
+if (url.match('tenbagger')) {
+
+    jQuery.ajax({
+        url: 'https://stocktown.versus.jp/api/tenbagger.php',
+        type: 'GET',
+        dataType: 'json'
+    }).done(function (data) {
+        jQuery.each(data, function (index, value) {
+            let info = JSON.parse(value.data);
+
+            if (value.overview == null) {
+                stock_name = value.stock_name;
+            } else {
+                stock_name = value.overview;
+            }
+
+            if (value.company == null) {
+                company = '-';
+            } else {
+                company = value.company;
+            }
+
+            let closing_price = parseInt(value.closing_price.replace(/\[/, ' ').replace(/\]/, ' '), 10);
+            let open_price = parseInt(value.open_price.replace(/\[/, ' ').replace(/\]/, ' '), 10);
+            let high_price = parseInt(value.high_price.replace(/\[/, ' ').replace(/\]/, ' '), 10);
+            let low_price = parseInt(value.low_price.replace(/\[/, ' ').replace(/\]/, ' '), 10);
+            let volume = parseInt(value.volume.replace(/\[/, ' ').replace(/\]/, ' '), 10);
+
+
+            jQuery('#tenbagger_list').append(
+                ' <div class="stock"><div class="pict"><img style="width: 100px; height: 100px; border-radius: 10px;" src="' + info.logo_url + '" /></div>' +
+                '    <h3 style="text-align: center"><a href="/stock?value=' + value.symbol + '">' + stock_name + '</a></h3>\n' +
+                '<div class="box">\n' +
+                ' <div class="text">\n' +
+                ' <p class="description">' + company + '</p>\n' +
+                '<p class="time"><i class="far fa-clock"></i>' + value.update_at + '</p>\n' +
+                '<p class="author"><i class="fas fa-at"></i>' + value.website + '</p>\n' +
+                '  </div>' +
+                '<div class="stock-nav">\n' +
+                '<h6><span id="update_day">前日比（' + value.update_at + '）</span></h6>      \n' +
+                '<table>\n' +
+                '<tr>\n' +
+                '<td >前日終値</td>\n' +
+                '<td id="closing_price">' + closing_price + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>始値</td>\n' +
+                '<td id="open_price">' + open_price + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>高値</td>\n' +
+                '<td id="high_price">' + high_price + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>安値</td>\n' +
+                '<td id="low_price">' + low_price + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>出来高</td>\n' +
+                '<td id="volume">' + volume + '</td>\n' +
+                '</tr>\n' +
+                '</table>\n' +
+                '<h6><span>参考指数</span></h6>\n' +
+                '   \n' +
+                '<table>\n' +
+                '       <tr>\n' +
+                '<td>時価総額</td>\n' +
+                '<td id="marketCap">' + info.marketCap.toLocaleString() + '円' + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>発行済株式数</td>\n' +
+                '<td id="sharesOutstanding">' + info.sharesOutstanding.toLocaleString() + '枚' + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>PER（株価収益率）</td>\n' +
+                '<td id="per">' + value.per + '倍</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>PBR（株価純資産倍率）</td>\n' +
+                '<td id="pbr">' + value.pbr + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>EPS（1株当たりの当期純利益）</td>\n' +
+                '<td id="eps">' + value.eps + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>ROE（株主資本利益率）</td>\n' +
+                '<td id="roe">' + value.roe + '%</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>配当利回り</td>\n' +
+                '<td id="dividend">' + info.dividendYield + '</td>\n' +
+                '</tr>\n' +
+                ' <tr>\n' +
+                '<td>空売り比率</td>\n' +
+                '<td id="short_ratio">' + info.shortRatio + '</td>\n' +
+                '</tr>\n' +
+                '</table>\n' +
+                '</div><hr>' +
+                '</div></div>');
+        });
+    }).fail(function (data) {
+    });
+
+
+}
+
 
 if (url.match('screening')) {
     jQuery.ajax({
@@ -864,7 +978,7 @@ if (url.match('earnings_calendar')) {
             jQuery('#osusume').append('' +
                 '<tr>' +
                 '<td class="icon bird"><div>' +
-                '<a href="/p/stock?value=' + value.symbol + '">' + stock_name+ '</a></div></td>\n' +
+                '<a href="/p/stock?value=' + value.symbol + '">' + stock_name + '</a></div></td>\n' +
                 '<td><div>' + value.calendar_start + ' ～ ' + value.calendar_end + '</div></td>\n' +
                 '      </tr>');
         });

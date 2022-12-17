@@ -19,12 +19,14 @@ try {
 function get($pdo, $market, $limit)
 {
         $offset = $limit - 100;
-        $sql = "SELECT DISTINCT ms.* , mt.*
+        $sql = "SELECT DISTINCT ms.* , mt.*, info.*
 FROM marketstock AS ms
-LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
-
+INNER JOIN market_translation as mt ON mt.marketstock_id = ms.id
+INNER JOIN marketstockindex as msi ON msi.marketstock_id = ms.id
+INNER JOIN marketstockinfo as info ON info.marketstock_id = ms.id
 WHERE ms.stock_exchange_country = '$market'
-LIMIT $limit offset $offset";
+LIMIT $limit offset $offset
+";
 
     $result = $pdo->query($sql);
 

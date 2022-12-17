@@ -19,8 +19,11 @@ try {
 function get($pdo)
 {
 
-    $sql = "SELECT ms.*
+    $sql = "SELECT DISTINCT ms.* ,msi.* , mt.*, info.*
 FROM marketstock AS ms
+INNER JOIN marketstockindex as msi ON msi.marketstock_id = ms.id
+LEFT JOIN market_translation as mt ON mt.marketstock_id = ms.id
+INNER JOIN marketstockinfo as info ON info.marketstock_id = ms.id
 INNER JOIN tenbagger as t ON t.marketstock_id = ms.id";
 
     $result = $pdo->query($sql);
